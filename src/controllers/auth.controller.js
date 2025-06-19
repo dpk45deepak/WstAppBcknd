@@ -1,6 +1,5 @@
 import User from '../models/User.model.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import config from '../config/config.js';
 
 // Controller for user registration
@@ -17,6 +16,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
+    // Password hashing should be handled in the User model's pre-save hook
     const newUser = new User({ name, email, password, role, address, phone });
     await newUser.save();
 
@@ -32,7 +32,8 @@ export const register = async (req, res) => {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        role: newUser.role
+        role: newUser.role,
+        message: 'Registration successful'
       }
     });
   } catch (error) {
@@ -41,7 +42,7 @@ export const register = async (req, res) => {
   }
 };
 
-// Controller for user logout
+// Controller for user logout (stateless, just respond)
 export const logout = async (req, res) => {
   try {
     res.status(200).json({ message: 'Logout successful' });
@@ -59,20 +60,21 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: 'Please enter email and password' });
     }
 
-    const user = await User.findOne({ email });
+    // Explicitly select password if your schema uses select: false
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid password' });
     }
 
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       config.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '48h' }
     );
 
     res.status(200).json({

@@ -1,5 +1,7 @@
 import express from 'express';
 import { register, logout, login } from '../controllers/auth.controller.js';
+import { verifyToken, checkRole } from '../middlewares/auth.middleware.js';
+
 
 
 const router = express.Router();
@@ -8,7 +10,7 @@ const router = express.Router();
 router.post('/register',register);
 
 // POST /api/auth/login - Login user
-router.post('/login',login);
+router.post('/login', verifyToken, login);
 
 // POST /api/auth/logout - Logout user
 router.post('/logout',logout);
