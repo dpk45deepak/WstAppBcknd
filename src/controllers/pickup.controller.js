@@ -51,7 +51,7 @@ const createPickup = async (req, res) => {
 const getUserPickups = async (req, res) => {
   try {
     const userId = req.user.id;
-
+    console.log("userId : ",userId);
     const pickups = await Pickup.find({ userId }).sort({ pickupDate: -1 });
 
     res.status(200).json(pickups);

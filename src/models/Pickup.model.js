@@ -18,7 +18,7 @@ const pickupSchema = new mongoose.Schema({
   },
   wasteType: { // Field for the type of waste being picked up
     type: String, // Data type is String
-    enum: ['recyclable', 'hazardous', 'organic', 'electronic', 'other'], // Allowed values for waste type
+    enum: ['recyclable', 'hazardous', 'organic', 'electronic', 'other', 'plastic'], // Allowed values for waste type
     required: true // This field is required
   },
   quantity: { // Field for the estimated quantity of waste in kg

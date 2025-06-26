@@ -14,14 +14,17 @@ app.use(express.json());
 // default route
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to the API',
+    message: 'Welcome to the WstApp API',
+    status: 200,
+    author: "Deepak Kumar",
+    requestedAt: new Date().toISOString().split('T'),
   });
 })
 
 // Register routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/pickups', pickupRoutes);
+app.use('/api/pickup', pickupRoutes);
 // app.use('/api/payments', paymentRoutes);
 
 // Global error handler middleware (should be last)

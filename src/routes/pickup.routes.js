@@ -1,6 +1,6 @@
 import express from 'express';
 import pickupController from '../controllers/pickup.controller.js';
-import { verifyToken } from '../middlewares/auth.middleware.js';
+import { checkRole, verifyToken } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.post('/', verifyToken, pickupController.createPickup);
 router.get('/', verifyToken, pickupController.getUserPickups);
 
 // Get specific pickup details by ID
-router.get('/:id', verifyToken, pickupController.getPickupById);
+router.get('/:id', verifyToken, checkRole("driver", "user", "admin"), pickupController.getPickupById);
 
 // Cancel a pickup request by ID
 router.put('/:id/cancel', verifyToken, pickupController.cancelPickup);
