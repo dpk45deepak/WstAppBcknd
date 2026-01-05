@@ -11,6 +11,15 @@ const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    console.log(
+      `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} → ${res.statusCode} (${Date.now() - start}ms)`
+    );
+  });
+  next();
+});
 
 // default route
 app.get('/api', (req, res) => {
