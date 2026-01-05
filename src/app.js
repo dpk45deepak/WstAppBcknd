@@ -3,6 +3,7 @@ import errorMiddleware from './middlewares/error.middleware.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import pickupRoutes from './routes/pickup.routes.js';
+import driverRoutes from './routes/driver.routes.js';
 // import paymentRoutes from './routes/payment.routes.js';
 
 
@@ -12,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 // default route
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to the WstApp API',
     status: 200,
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pickup', pickupRoutes);
+app.use("/api/driver", driverRoutes);
 // app.use('/api/payments', paymentRoutes);
 
 // Global error handler middleware (should be last)
