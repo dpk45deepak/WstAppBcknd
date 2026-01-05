@@ -13,12 +13,12 @@ const pickupSchema = new mongoose.Schema({
   },
   status: { // Field for the current status of the pickup request
     type: String, // Data type is String
-    enum: ['pending', 'scheduled', 'completed', 'cancelled'], // Allowed values for the status
+    enum: ['pending', 'scheduled', 'in_progress', 'completed', 'cancelled'], // Allowed values for the status
     default: 'pending' // Default status is 'pending'
   },
   wasteType: { // Field for the type of waste being picked up
     type: String, // Data type is String
-    enum: ['recyclable', 'hazardous', 'organic', 'electronic', 'other', 'plastic'], // Allowed values for waste type
+    enum: ['recyclable', 'hazardous', 'organic', 'electronic', 'other', 'plastic', 'general'], // Allowed values for waste type
     required: true // This field is required
   },
   quantity: { // Field for the estimated quantity of waste in kg
@@ -27,10 +27,33 @@ const pickupSchema = new mongoose.Schema({
   },
   images: [String], // Field to store an array of URLs to waste images
   specialInstructions: String, // Field for any special instructions for the pickup
+  notes: String, // Additional notes
+
+  // Driver assignment
   assignedDriverId: { // Field to store the ID of the driver assigned to the pickup
     type: mongoose.Schema.Types.ObjectId, // Data type is MongoDB ObjectId
     ref: 'User' // References the 'User' collection (specifically users with 'driver' role)
   },
+  driverId: { // Alias/Duplicate for easier frontend integration if needed
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+
+  // Payment & Pricing
+  price: {
+    type: Number
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'paid', 'refunded', 'failed'],
+    default: 'pending'
+  },
+
+  // Timestamps for lifecycle
+  startedAt: Date,
+  completedAt: Date,
+  cancelledAt: Date,
+
   pickupAddress: { // Embedded object for the pickup address details
     street: String, // Street address
     city: String, // City
@@ -43,6 +66,15 @@ const pickupSchema = new mongoose.Schema({
   }
 }, { timestamps: true }); // Options object: timestamps adds createdAt and updatedAt fields automatically
 
+// Pre-save hook to sync driverId and assignedDriverId if one is set
+pickupSchema.pre('save', function (next) {
+  if (this.assignedDriverId && !this.driverId) {
+    this.driverId = this.assignedDriverId;
+  } else if (this.driverId && !this.assignedDriverId) {
+    this.assignedDriverId = this.driverId;
+  }
+  next();
+});
 
 const Pickup = mongoose.model('Pickup', pickupSchema);
 

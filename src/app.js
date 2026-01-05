@@ -1,4 +1,6 @@
 import express from 'express';
+import cors from "cors";
+import morgan from "morgan";
 import errorMiddleware from './middlewares/error.middleware.js';
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
@@ -8,6 +10,20 @@ import driverRoutes from './routes/driver.routes.js';
 
 
 const app = express();
+
+// CORS configuration
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173"
+    ],
+    credentials: true
+  })
+);
+
+// HTTP request logger middleware
+app.use(morgan("dev")); // 👈 DEFAULT & MOST USED
 
 // Middleware to parse JSON requests
 app.use(express.json());
@@ -35,6 +51,7 @@ app.get('/api', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pickup', pickupRoutes);
+app.use('/api/pickups', pickupRoutes);
 app.use("/api/driver", driverRoutes);
 // app.use('/api/payments', paymentRoutes);
 

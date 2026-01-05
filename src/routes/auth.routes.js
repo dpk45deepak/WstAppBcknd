@@ -7,10 +7,10 @@ import { verifyToken, checkRole } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
 // POST /api/auth/register - Register new user
-router.post('/register',register);
+router.post('/register', register);
 
 // POST /api/auth/login - Login user
-router.post('/login', verifyToken, login);
+router.post('/login', login);
 
 // POST /api/auth/logout - Logout user
 router.post('/logout',logout);

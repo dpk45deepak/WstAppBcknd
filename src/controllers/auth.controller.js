@@ -5,7 +5,8 @@ import config from '../config/config.js';
 // Controller for user registration
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role, address, phone } = req.body;
+    const { name, email, password, role } = req.body;
+    console.log('Registration data received:', req.body);
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ message: 'Please enter all required fields' });
@@ -17,7 +18,7 @@ export const register = async (req, res) => {
     }
 
     // Password hashing should be handled in the User model's pre-save hook
-    const newUser = new User({ name, email, password, role, address, phone });
+    const newUser = new User({ name, email, password, role });
     await newUser.save();
 
     const token = jwt.sign(
@@ -28,12 +29,14 @@ export const register = async (req, res) => {
 
     res.status(201).json({
       token,
+      success: true,
+      status: 201,
+      message: 'Registration successful',
       user: {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
-        message: 'Registration successful'
       }
     });
   } catch (error) {
@@ -79,6 +82,9 @@ export const login = async (req, res) => {
 
     res.status(200).json({
       token,
+      success: true,
+      status: 200,
+      message: 'Login successful',
       user: {
         id: user._id,
         name: user.name,
