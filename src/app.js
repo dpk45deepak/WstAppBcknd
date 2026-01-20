@@ -9,6 +9,9 @@ import driverRoutes from './routes/driver.routes.js';
 // import paymentRoutes from './routes/payment.routes.js';
 
 
+import "../ping.js"
+
+
 const app = express();
 
 // CORS configuration
