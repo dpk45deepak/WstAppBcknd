@@ -1,6 +1,6 @@
 import https from "https";
 
-const URL = "https://your-render-app.onrender.com/health"; // change this
+const URL = "https://wstappbcknd.onrender.com/health";
 
 function ping() {
     https.get(URL, (res) => {
