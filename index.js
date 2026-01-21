@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import app from "./src/app.js";
 import connectDB from "./src/db/connectDB.js";
+import "./ping.js";
 
 dotenv.config({
     path: "./.env",
