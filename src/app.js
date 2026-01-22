@@ -15,15 +15,27 @@ import "../ping.js"
 const app = express();
 
 // CORS configuration
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:5173",
-//       "https://wstapp.netlify.app/"
-//     ],
-//     credentials: true
-//   })
-// );
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowed = [
+        "http://localhost:5173",
+        "https://wstapp.netlify.app"
+      ];
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
+app.options("*", cors());
+
 
 // HTTP request logger middleware
 app.use(morgan("dev")); // 👈 DEFAULT & MOST USED
@@ -41,6 +53,15 @@ app.use((req, res, next) => {
 });
 
 // default route
+app.get('/', (req, res) => {
+  res.json({
+    message: 'WstApp Backend is running',
+    status: 200,
+    author: "Deepak Kumar",
+    requestedAt: new Date().toISOString().split('T'),
+  });
+});
+
 app.get('/api', (req, res) => {
   res.json({
     message: 'Welcome to the WstApp API',
