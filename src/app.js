@@ -15,15 +15,15 @@ import "../ping.js"
 const app = express();
 
 // CORS configuration
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://wstapp.netlify.app"
-    ],
-    credentials: true
-  })
-);
+// app.use(
+//   cors({
+//     origin: [
+//       "http://localhost:5173",
+//       "https://wstapp.netlify.app/"
+//     ],
+//     credentials: true
+//   })
+// );
 
 // HTTP request logger middleware
 app.use(morgan("dev")); // 👈 DEFAULT & MOST USED
