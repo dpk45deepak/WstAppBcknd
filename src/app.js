@@ -38,7 +38,7 @@ app.options("*", cors());
 
 
 // HTTP request logger middleware
-app.use(morgan("dev")); // 👈 DEFAULT & MOST USED
+app.use(morgan("dev"));
 
 // Middleware to parse JSON requests
 app.use(express.json());
