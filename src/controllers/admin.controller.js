@@ -2,6 +2,7 @@ import User from '../models/User.model.js';
 import Pickup from '../models/Pickup.model.js';
 import DriverLocation from '../models/DriverLocation.model.js';
 import Payment from '../models/Payment.model.js';
+import { emitPickupUpdate } from '../socket.js';
 
 // Get high level admin dashboard stats
 export const getAdminStats = async (req, res) => {
@@ -136,6 +137,7 @@ export const updateAdminPickupStatus = async (req, res) => {
 
     const pickup = await Pickup.findByIdAndUpdate(id, { status }, { new: true });
     if (!pickup) return res.status(404).json({ success: false, error: 'Pickup not found' });
+    emitPickupUpdate(pickup);
 
     res.status(200).json({
       success: true,

@@ -1,4 +1,5 @@
 import Pickup from '../models/Pickup.model.js';
+import { emitPickupUpdate } from '../socket.js';
 
 // Create a new pickup request
 const createPickup = async (req, res) => {
@@ -45,6 +46,7 @@ const createPickup = async (req, res) => {
     });
 
     await newPickup.save();
+    emitPickupUpdate(newPickup);
 
     res.status(201).json({
       success: true,
@@ -142,6 +144,7 @@ const cancelPickup = async (req, res) => {
       pickup.notes = (pickup.notes ? `${pickup.notes} | ` : '') + `Cancellation reason: ${req.body.reason}`;
     }
     await pickup.save();
+    emitPickupUpdate(pickup);
 
     res.status(200).json({
       success: true,
@@ -232,6 +235,7 @@ const updatePickup = async (req, res) => {
     const pickup = await Pickup.findByIdAndUpdate(id, updates, { new: true });
 
     if (!pickup) return res.status(404).json({ error: 'Pickup not found' });
+    emitPickupUpdate(pickup);
 
     res.status(200).json({
       success: true,
@@ -263,6 +267,7 @@ const assignDriver = async (req, res) => {
     ).populate('driverId', 'name email phone');
 
     if (!pickup) return res.status(404).json({ error: 'Pickup not found' });
+    emitPickupUpdate(pickup);
 
     res.status(200).json({
       success: true,
@@ -284,6 +289,7 @@ const startPickup = async (req, res) => {
       { new: true }
     );
     if (!pickup) return res.status(404).json({ error: 'Pickup not found' });
+    emitPickupUpdate(pickup);
     res.status(200).json({ success: true, data: pickup });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -300,6 +306,7 @@ const completePickup = async (req, res) => {
       { new: true }
     );
     if (!pickup) return res.status(404).json({ error: 'Pickup not found' });
+    emitPickupUpdate(pickup);
     res.status(200).json({ success: true, data: pickup });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -381,6 +388,7 @@ const ratePickup = async (req, res) => {
     );
 
     if (!pickup) return res.status(404).json({ error: 'Pickup not found' });
+    emitPickupUpdate(pickup);
 
     res.status(200).json({
       success: true,
@@ -403,6 +411,7 @@ const uploadPickupPhoto = async (req, res) => {
       pickup.images = pickup.images || [];
       pickup.images.push(photoUrl);
       await pickup.save();
+      emitPickupUpdate(pickup);
     }
 
     res.status(200).json({

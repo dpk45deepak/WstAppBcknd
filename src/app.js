@@ -15,12 +15,16 @@ const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
+      const customOrigins = process.env.CLIENT_ORIGINS 
+        ? process.env.CLIENT_ORIGINS.split(',').map(s => s.trim()) 
+        : [];
       const allowed = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:5174",
         "http://localhost:3000",
-        "https://wstapp.netlify.app"
+        "https://wstapp.netlify.app",
+        ...customOrigins
       ];
       if (!origin || allowed.includes(origin)) {
         callback(null, true);

@@ -66,6 +66,9 @@ const userSchema = new mongoose.Schema(
       virtuals: true,
       transform: (doc, ret) => {
         ret.id = ret._id.toString();
+        ret.phone = ret.phone || '';
+        ret.vehiclePlate = ret.vehiclePlate || '';
+        ret.availability = ret.availability !== undefined ? ret.availability : true;
         delete ret.password;
         return ret;
       }
@@ -74,6 +77,9 @@ const userSchema = new mongoose.Schema(
       virtuals: true,
       transform: (doc, ret) => {
         ret.id = ret._id.toString();
+        ret.phone = ret.phone || '';
+        ret.vehiclePlate = ret.vehiclePlate || '';
+        ret.availability = ret.availability !== undefined ? ret.availability : true;
         delete ret.password;
         return ret;
       }

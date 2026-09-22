@@ -76,7 +76,18 @@ const pickupSchema = new mongoose.Schema({
         : ret.pickupAddress && typeof ret.pickupAddress === 'object' 
           ? [ret.pickupAddress.street, ret.pickupAddress.city, ret.pickupAddress.state, ret.pickupAddress.zipCode].filter(Boolean).join(', ')
           : '';
-      ret.address = ret.address || addrStr || 'Address not specified';
+      ret.address = ret.address || addrStr || 'Local Address';
+      ret.city = ret.pickupAddress && typeof ret.pickupAddress === 'object' && ret.pickupAddress.city 
+        ? ret.pickupAddress.city 
+        : 'Springfield';
+      ret.userName = ret.userId && typeof ret.userId === 'object' && ret.userId.name 
+        ? ret.userId.name 
+        : (ret.userName || 'Customer');
+      ret.driverName = ret.driverId && typeof ret.driverId === 'object' && ret.driverId.name 
+        ? ret.driverId.name 
+        : (ret.driverName || 'Unassigned');
+      ret.price = typeof ret.price === 'number' ? ret.price : 25;
+      ret.distance = typeof ret.distance === 'number' ? ret.distance : 3.5;
       return ret;
     }
   },
@@ -89,7 +100,18 @@ const pickupSchema = new mongoose.Schema({
         : ret.pickupAddress && typeof ret.pickupAddress === 'object' 
           ? [ret.pickupAddress.street, ret.pickupAddress.city, ret.pickupAddress.state, ret.pickupAddress.zipCode].filter(Boolean).join(', ')
           : '';
-      ret.address = ret.address || addrStr || 'Address not specified';
+      ret.address = ret.address || addrStr || 'Local Address';
+      ret.city = ret.pickupAddress && typeof ret.pickupAddress === 'object' && ret.pickupAddress.city 
+        ? ret.pickupAddress.city 
+        : 'Springfield';
+      ret.userName = ret.userId && typeof ret.userId === 'object' && ret.userId.name 
+        ? ret.userId.name 
+        : (ret.userName || 'Customer');
+      ret.driverName = ret.driverId && typeof ret.driverId === 'object' && ret.driverId.name 
+        ? ret.driverId.name 
+        : (ret.driverName || 'Unassigned');
+      ret.price = typeof ret.price === 'number' ? ret.price : 25;
+      ret.distance = typeof ret.distance === 'number' ? ret.distance : 3.5;
       return ret;
     }
   }
