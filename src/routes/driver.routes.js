@@ -3,11 +3,15 @@ import {
     updateDriverLocation,
     getDriverLocation,
     getAvailableDrivers,
-    removeDriverLocation
+    removeDriverLocation,
+    getDriverEarnings
 } from '../controllers/driver.controller.js';
 import { verifyToken, checkRole } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
+
+// Driver earnings (driver or admin)
+router.get('/earnings', verifyToken, checkRole('driver', 'admin'), getDriverEarnings);
 
 // Update or create the driver's current location (driver only)
 router.post('/location', verifyToken, checkRole('driver'), updateDriverLocation);

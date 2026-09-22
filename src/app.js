@@ -6,11 +6,8 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import pickupRoutes from './routes/pickup.routes.js';
 import driverRoutes from './routes/driver.routes.js';
-// import paymentRoutes from './routes/payment.routes.js';
-
-
-import "../ping.js"
-
+import paymentRoutes from './routes/payment.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 const app = express();
 
@@ -20,6 +17,9 @@ app.use(
     origin: (origin, callback) => {
       const allowed = [
         "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://localhost:3000",
         "https://wstapp.netlify.app"
       ];
       if (!origin || allowed.includes(origin)) {
@@ -35,7 +35,6 @@ app.use(
 );
 
 app.options("*", cors());
-
 
 // HTTP request logger middleware
 app.use(morgan("dev"));
@@ -69,20 +68,20 @@ app.get('/api', (req, res) => {
     author: "Deepak Kumar",
     requestedAt: new Date().toISOString().split('T'),
   });
-})
+});
 
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
-
 
 // Register routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pickup', pickupRoutes);
 app.use('/api/pickups', pickupRoutes);
-app.use("/api/driver", driverRoutes);
-// app.use('/api/payments', paymentRoutes);
+app.use('/api/driver', driverRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Global error handler middleware (should be last)
 app.use(errorMiddleware);

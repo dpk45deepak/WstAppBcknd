@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 8,
+      minlength: 6,
       select: false // Prevent it from being returned in queries by default
     },
     role: {
@@ -27,6 +27,23 @@ const userSchema = new mongoose.Schema(
       required: true,
       enum: ['user', 'driver', 'admin'],
       default: 'user'
+    },
+    status: {
+      type: String,
+      enum: ['active', 'suspended'],
+      default: 'active'
+    },
+    availability: {
+      type: Boolean,
+      default: true
+    },
+    vehiclePlate: {
+      type: String,
+      trim: true
+    },
+    rating: {
+      type: Number,
+      default: 4.8
     },
     address: {
       street: { type: String, trim: true },
@@ -44,7 +61,23 @@ const userSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        delete ret.password;
+        return ret;
+      }
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret._id.toString();
+        delete ret.password;
+        return ret;
+      }
+    }
   }
 );
 

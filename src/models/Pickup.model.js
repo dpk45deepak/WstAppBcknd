@@ -54,25 +54,65 @@ const pickupSchema = new mongoose.Schema({
   completedAt: Date,
   cancelledAt: Date,
 
-  pickupAddress: { // Embedded object for the pickup address details
-    street: String, // Street address
-    city: String, // City
-    state: String, // State
-    zipCode: String, // Zip code
-    coordinates: { // Embedded object for geographical coordinates
-      lat: Number, // Latitude
-      lng: Number // Longitude
+  // Feedback & rating
+  rating: Number,
+  feedback: String,
+
+  // Direct address string (for frontend display)
+  address: String,
+
+  // Embedded object or string for pickup address
+  pickupAddress: {
+    type: mongoose.Schema.Types.Mixed
+  }
+}, {
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = ret._id ? ret._id.toString() : undefined;
+      const addrStr = typeof ret.pickupAddress === 'string' 
+        ? ret.pickupAddress 
+        : ret.pickupAddress && typeof ret.pickupAddress === 'object' 
+          ? [ret.pickupAddress.street, ret.pickupAddress.city, ret.pickupAddress.state, ret.pickupAddress.zipCode].filter(Boolean).join(', ')
+          : '';
+      ret.address = ret.address || addrStr || 'Address not specified';
+      return ret;
+    }
+  },
+  toObject: {
+    virtuals: true,
+    transform: (doc, ret) => {
+      ret.id = ret._id ? ret._id.toString() : undefined;
+      const addrStr = typeof ret.pickupAddress === 'string' 
+        ? ret.pickupAddress 
+        : ret.pickupAddress && typeof ret.pickupAddress === 'object' 
+          ? [ret.pickupAddress.street, ret.pickupAddress.city, ret.pickupAddress.state, ret.pickupAddress.zipCode].filter(Boolean).join(', ')
+          : '';
+      ret.address = ret.address || addrStr || 'Address not specified';
+      return ret;
     }
   }
-}, { timestamps: true }); // Options object: timestamps adds createdAt and updatedAt fields automatically
+});
 
-// Pre-save hook to sync driverId and assignedDriverId if one is set
+// Pre-save hook to sync driverId, assignedDriverId, and address
 pickupSchema.pre('save', function (next) {
   if (this.assignedDriverId && !this.driverId) {
     this.driverId = this.assignedDriverId;
   } else if (this.driverId && !this.assignedDriverId) {
     this.assignedDriverId = this.driverId;
   }
+
+  if (!this.address && this.pickupAddress) {
+    if (typeof this.pickupAddress === 'string') {
+      this.address = this.pickupAddress;
+    } else if (typeof this.pickupAddress === 'object') {
+      this.address = [this.pickupAddress.street, this.pickupAddress.city, this.pickupAddress.state, this.pickupAddress.zipCode].filter(Boolean).join(', ');
+    }
+  } else if (this.address && !this.pickupAddress) {
+    this.pickupAddress = this.address;
+  }
+
   next();
 });
 
